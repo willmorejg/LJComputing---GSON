@@ -3,11 +3,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.2.5.RELEASE</version>
-    </parent>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.2.5.RELEASE</version>
+	</parent>
 
 	<groupId>net.ljcomputing</groupId>
 	<artifactId>gson</artifactId>
@@ -15,6 +15,11 @@
 
 	<name>LJComputing - GSON</name>
 	<description>LJ Computing Spring Boot with GSON implementation</description>
+
+	<scm>
+		<url>https://github.com/willmorejg/net.ljcomputing.gson.git</url>
+		<connection>https://github.com/willmorejg/net.ljcomputing.gson.git</connection>
+	</scm>
 
 	<!-- Contact and License Information -->
 	<organization>
@@ -78,7 +83,7 @@
 				<artifactId>maven-scm-plugin</artifactId>
 
 				<configuration>
-					<goals>install</goals>
+					<tag>${project.artifactId}-${project.version}</tag>
 				</configuration>
 			</plugin>
 
