@@ -11,7 +11,7 @@
 
 	<groupId>net.ljcomputing</groupId>
 	<artifactId>gson</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 
 	<name>LJComputing - GSON</name>
 	<description>LJ Computing Spring Boot with GSON implementation</description>
