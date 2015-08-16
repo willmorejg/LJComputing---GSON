@@ -97,7 +97,7 @@ public class GsonConverterServiceImplTest {
 
     @Test
     public void test4Merge() throws Exception {
-	thing = (Thing) gsonConverterService.merge(thing, thingFrom);
+	thing = (Thing) gsonConverterService.merge(thing, thingFrom, new String[]{"uuid"});
 	logger.debug("result: {}", thing);
 	assertEquals(thingFrom, thing);
     }
