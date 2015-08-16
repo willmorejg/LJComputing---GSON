@@ -47,7 +47,7 @@ public class GsonConfiguration {
      * @return the http message converters
      */
     @Bean
-    public final HttpMessageConverters customConverters() {
+    public HttpMessageConverters customConverters() {
 	Collection<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
 
 	GsonHttpMessageConverter gsonHttpMessageConverter 
