@@ -111,7 +111,7 @@ public class GsonConverterServiceImpl implements GsonConverterService {
 	    try {
 		return current.getDeclaredField(fieldName);
 	    } catch (Exception e) {
-		logger.debug("exception ignored: {}", e.getMessage());
+		logger.debug("exception ignored while getting declared field {} for class {}: {}", fieldName, clazz, e.getMessage());
 	    }
 	} while ((current = current.getSuperclass()) != null);
 
