@@ -16,15 +16,21 @@
 
 package net.ljcomputing.gson.config;
 
-import java.util.List;
+import net.ljcomputing.gson.strategy.ExcludeFromJsonAnnotationExclusionStrategy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+
+import java.util.List;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * GSON Web MVC configurer adapter - overrides message converters.
@@ -36,29 +42,35 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableWebMvc
 public class GsonWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
 
-    /** The logger. */
-    private static Logger logger = LoggerFactory
-	    .getLogger(GsonWebMvcConfigurerAdapter.class);
+  /** The logger. */
+  private static Logger logger = LoggerFactory
+      .getLogger(GsonWebMvcConfigurerAdapter.class);
 
-    /**
-     * Instantiates a new gson web mvc configurer adapter.
-     */
+  /**
+   * Instantiates a new gson web mvc configurer adapter.
+   */
     public GsonWebMvcConfigurerAdapter() {
-	logger.info("Initializing {}", this.getClass());
-    }
+    logger.info("Initializing {}", this.getClass());
+  }
 
-    /**
-     * Configure message converters.
-     *
-     * @param converters the converters
-     * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter#configureMessageConverters(java.util.List)
-     */
-    @Override
-    public final void configureMessageConverters(
-	    final List<HttpMessageConverter<?>> converters) {
-	GsonHttpMessageConverter gsonHttpMessageConverter 
-		= new GsonHttpMessageConverter();
-	
-	converters.add(gsonHttpMessageConverter);
-    }
+  /**
+   * Configure message converters.
+   *
+   * @param converters the converters
+   * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter#configureMessageConverters(java.util.List)
+   */
+  @Override
+  public final void configureMessageConverters(
+      final List<HttpMessageConverter<?>> converters) {
+    Gson gson = new GsonBuilder()
+    .setExclusionStrategies(
+        new ExcludeFromJsonAnnotationExclusionStrategy())
+    .serializeNulls().create();
+    
+    GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+    
+    gsonHttpMessageConverter.setGson(gson);
+    
+    converters.add(gsonHttpMessageConverter);
+  }
 }

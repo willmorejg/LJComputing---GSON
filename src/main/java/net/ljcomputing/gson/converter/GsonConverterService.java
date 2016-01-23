@@ -27,59 +27,59 @@ import java.util.List;
  */
 public interface GsonConverterService {
 
-    /**
-     * Transform given source Object to JSON.
-     *
-     * @param source
-     *            the source Object
-     * @return the JSON String
-     */
-    String toJson(Object source);
+  /**
+   * Transform given source Object to JSON.
+   *
+   * @param source
+   *            the source Object
+   * @return the JSON String
+   */
+  String toJson(Object source);
 
-    /**
-     * From json.
-     *
-     * @param json
-     *            the json
-     * @param target
-     *            the target
-     * @return the object
-     */
-    Object fromJson(String json,
-	    @SuppressWarnings("rawtypes") Class target);
+  /**
+   * From json.
+   *
+   * @param json
+   *            the json
+   * @param target
+   *            the target
+   * @return the object
+   */
+  Object fromJson(String json, @SuppressWarnings("rawtypes") Class target);
 
-    /**
-     * From json.
-     *
-     * @param json
-     *            the json
-     * @param target
-     *            the target
-     * @return the list
-     */
-    @SuppressWarnings("rawtypes") List fromJson(String json, Type target);
+  /**
+   * From json.
+   *
+   * @param json
+   *            the json
+   * @param target
+   *            the target
+   * @return the list
+   */
+  @SuppressWarnings("rawtypes")
+  List fromJson(String json, Type target);
 
-    /**
-     * Merge.
-     *
-     * @param to
-     *            the to
-     * @param from
-     *            the from
-     * @return the object
-     */
-    Object merge(Object to, Object from);
+  /**
+   * Merge.
+   *
+   * @param to
+   *            the to
+   * @param from
+   *            the from
+   * @return the object
+   */
+  Object merge(Object to, Object from);
 
-    /**
-     * Merge.
-     *
-     * @param to
-     *            the to
-     * @param from
-     *            the from
-     * @param ignoredProperties
-     *            the ignored properties
-     * @return the object
-     */
-    Object merge(Object to, Object from, String[] ignoredProperties);
+  /**
+   * Merge.
+   *
+   * @param to
+   *            the to
+   * @param from
+   *            the from
+   * @param ignoredProperties
+   *            the ignored properties
+   * @return the object
+   */
+  Object merge(Object to, Object from, String[] ignoredProperties);
 }
