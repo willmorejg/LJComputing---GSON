@@ -16,21 +16,20 @@
 
 package net.ljcomputing.gson.config;
 
-import net.ljcomputing.gson.strategy.ExcludeFromJsonAnnotationExclusionStrategy;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import java.util.List;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import net.ljcomputing.gson.strategy.ExcludeFromJsonAnnotationExclusionStrategy;
 
 /**
  * GSON Web MVC configurer adapter - overrides message converters.
@@ -43,34 +42,30 @@ import com.google.gson.GsonBuilder;
 public class GsonWebMvcConfigurerAdapter extends WebMvcConfigurerAdapter {
 
   /** The logger. */
-  private static Logger logger = LoggerFactory
-      .getLogger(GsonWebMvcConfigurerAdapter.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(GsonWebMvcConfigurerAdapter.class);
 
   /**
    * Instantiates a new gson web mvc configurer adapter.
    */
-    public GsonWebMvcConfigurerAdapter() {
-    logger.info("Initializing {}", this.getClass());
+  public GsonWebMvcConfigurerAdapter() {
+    super();
+    LOGGER.info("Initializing {}", this.getClass());
   }
 
   /**
-   * Configure message converters.
-   *
-   * @param converters the converters
-   * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter#configureMessageConverters(java.util.List)
+   * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
+   * #configureMessageConverters(java.util.List)
    */
   @Override
-  public final void configureMessageConverters(
-      final List<HttpMessageConverter<?>> converters) {
-    Gson gson = new GsonBuilder()
-    .setExclusionStrategies(
-        new ExcludeFromJsonAnnotationExclusionStrategy())
-    .serializeNulls().create();
-    
-    GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
-    
-    gsonHttpMessageConverter.setGson(gson);
-    
-    converters.add(gsonHttpMessageConverter);
+  public final void configureMessageConverters(final List<HttpMessageConverter<?>> converters) {
+    final Gson gson = new GsonBuilder()
+        .setExclusionStrategies(new ExcludeFromJsonAnnotationExclusionStrategy()).serializeNulls()
+        .create();
+
+    final GsonHttpMessageConverter messageConverter = new GsonHttpMessageConverter();
+
+    messageConverter.setGson(gson);
+
+    converters.add(messageConverter);
   }
 }

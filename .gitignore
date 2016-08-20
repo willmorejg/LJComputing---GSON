@@ -1,2 +1,4 @@
 /target/
 /.pmd
+/.project
+/.settings/

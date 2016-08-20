@@ -14,13 +14,12 @@
    limitations under the License.
  */
 
-
 package net.ljcomputing.gson.strategy;
-
-import net.ljcomputing.gson.annotation.ExcludeFromJson;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
+
+import net.ljcomputing.gson.annotation.ExcludeFromJson;
 
 /**
  * Exclude from Json annotation Gson exclusion strategy.
@@ -28,23 +27,22 @@ import com.google.gson.FieldAttributes;
  * @author James G. Willmore
  *
  */
-public class ExcludeFromJsonAnnotationExclusionStrategy
-    implements ExclusionStrategy {
+public class ExcludeFromJsonAnnotationExclusionStrategy implements ExclusionStrategy {
 
-  /* (non-Javadoc)
-   * @see com.google.gson.ExclusionStrategy#shouldSkipField(com.google.gson.FieldAttributes)
+  /**
+   * @see com.google.gson.ExclusionStrategy
+   * #shouldSkipField(com.google.gson.FieldAttributes)
    */
   @Override
-  public boolean shouldSkipField(FieldAttributes f) {
-    return f.getAnnotation(ExcludeFromJson.class) != null;
+  public boolean shouldSkipField(final FieldAttributes fieldAttributes) {
+    return fieldAttributes.getAnnotation(ExcludeFromJson.class) != null;
   }
 
-  /* (non-Javadoc)
+  /**
    * @see com.google.gson.ExclusionStrategy#shouldSkipClass(java.lang.Class)
    */
   @Override
-  public boolean shouldSkipClass(Class<?> clazz) {
+  public boolean shouldSkipClass(final Class<?> clazz) {
     return false;
   }
-
 }

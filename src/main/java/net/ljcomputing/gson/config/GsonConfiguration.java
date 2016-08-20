@@ -16,18 +16,17 @@
 
 package net.ljcomputing.gson.config;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Configuration class implementing GSON.
@@ -39,8 +38,8 @@ import java.util.Collection;
 @ComponentScan(basePackages = { "net.ljcomputing.gson.converter" })
 public class GsonConfiguration {
 
-  /** The logger. */
-  private Logger logger = LoggerFactory.getLogger(GsonConfiguration.class);
+  /** The SLF4J logger. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(GsonConfiguration.class);
 
   /**
    * Custom converters definitions.
@@ -49,12 +48,12 @@ public class GsonConfiguration {
    */
   @Bean
   public HttpMessageConverters customConverters() {
-    Collection<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-    GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+    final Collection<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+    final GsonHttpMessageConverter messageConverter = new GsonHttpMessageConverter();
 
-    messageConverters.add(gsonHttpMessageConverter);
+    messageConverters.add(messageConverter);
 
-    logger.info("Returning custom converters");
+    LOGGER.info("Returning custom converters");
 
     return new HttpMessageConverters(true, messageConverters);
   }

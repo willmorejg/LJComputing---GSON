@@ -30,30 +30,25 @@ public interface GsonConverterService {
   /**
    * Transform given source Object to JSON.
    *
-   * @param source
-   *            the source Object
-   * @return the JSON String
+   * @param source the source
+   * @return the string
    */
   String toJson(Object source);
 
   /**
    * From json.
    *
-   * @param json
-   *            the json
-   * @param target
-   *            the target
+   * @param json the json
+   * @param target the target
    * @return the object
    */
-  Object fromJson(String json, @SuppressWarnings("rawtypes") Class target);
+  Object fromJson(String json, Class<?> target);
 
   /**
    * From json.
    *
-   * @param json
-   *            the json
-   * @param target
-   *            the target
+   * @param json the json
+   * @param target the target
    * @return the list
    */
   @SuppressWarnings("rawtypes")
@@ -62,10 +57,8 @@ public interface GsonConverterService {
   /**
    * Merge.
    *
-   * @param to
-   *            the to
-   * @param from
-   *            the from
+   * @param to the to
+   * @param from the from
    * @return the object
    */
   Object merge(Object to, Object from);
@@ -73,13 +66,10 @@ public interface GsonConverterService {
   /**
    * Merge.
    *
-   * @param to
-   *            the to
-   * @param from
-   *            the from
-   * @param ignoredProperties
-   *            the ignored properties
+   * @param to the to
+   * @param from the from
+   * @param ignoredProperties the ignored properties
    * @return the object
    */
-  Object merge(Object to, Object from, String[] ignoredProperties);
+  Object merge(Object to, Object from, String ... ignoredProperties);
 }

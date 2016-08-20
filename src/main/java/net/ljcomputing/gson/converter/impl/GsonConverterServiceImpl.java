@@ -16,14 +16,6 @@
 
 package net.ljcomputing.gson.converter.impl;
 
-import net.ljcomputing.gson.converter.GsonConverterService;
-import net.ljcomputing.gson.strategy.ExcludeFromJsonAnnotationExclusionStrategy;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.stereotype.Service;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -32,8 +24,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import net.ljcomputing.gson.converter.GsonConverterService;
+import net.ljcomputing.gson.strategy.ExcludeFromJsonAnnotationExclusionStrategy;
 
 /**
  * GSON converter service implementation.
@@ -43,21 +42,19 @@ import com.google.gson.GsonBuilder;
  */
 @Service
 public class GsonConverterServiceImpl implements GsonConverterService {
-  /** The logger. */
-  private static Logger logger = LoggerFactory
-      .getLogger(GsonConverterServiceImpl.class);
+  /** The SLF4J Logger. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(GsonConverterServiceImpl.class);
 
-  /** The static Gson instance. */
-  private static Gson gson;
+  /** The Gson instance. */
+  private transient final Gson gson;
 
   /**
    * Instantiates a new gson converter service impl.
    */
   public GsonConverterServiceImpl() {
     gson = new GsonBuilder()
-        .setExclusionStrategies(
-            new ExcludeFromJsonAnnotationExclusionStrategy())
-        .serializeNulls().create();
+        .setExclusionStrategies(new ExcludeFromJsonAnnotationExclusionStrategy()).serializeNulls()
+        .create();
   }
 
   /**
@@ -71,9 +68,7 @@ public class GsonConverterServiceImpl implements GsonConverterService {
    * @see net.ljcomputing.gson.converter.GsonConverterService#fromJson(java.lang.String,
    *      java.lang.Class)
    */
-  @SuppressWarnings("unchecked")
-  public final Object fromJson(final String json,
-      @SuppressWarnings("rawtypes") final Class target) {
+  public final Object fromJson(final String json, final Class<?> target) {
     return gson.fromJson(json, target);
   }
 
@@ -91,118 +86,121 @@ public class GsonConverterServiceImpl implements GsonConverterService {
    *      java.lang.Object)
    */
   public final Object merge(final Object to, final Object from) {
-    Class<?> toClass = to.getClass();
-    Class<?> fromClass = from.getClass();
-    
-    if(!toClass.equals(fromClass)) {
-      throw new RuntimeException("cannot merge to and from -- they are not the same class");
+    Object result = null;
+    final Class<?> toClass = to.getClass();
+    final Class<?> fromClass = from.getClass();
+
+    if (toClass.equals(fromClass)) {
+      result = merge(to, from, new String[] {});
     }
-    
-    return merge(to, from, null);
+
+    return result;
   }
 
   /**
-   * @see net.ljcomputing.gson.converter.GsonConverterService#merge(java.lang.Object,
-   *      java.lang.Object, java.lang.String[])
+   * @see net.ljcomputing.gson.converter.GsonConverterService
+   * #merge(java.lang.Object, java.lang.Object, java.lang.String[])
    */
-  public final Object merge(final Object to, final Object from,
-      final String[] ignoredProperties) {
-    try {
-      mergeValues(getKeysFromJson(toJson(from)), to, from, ignoredProperties);
-    } catch (Exception e) {
-      logger.error("Exception occured while merging {} with {}", from, to, e);
-    }
-
+  public final Object merge(final Object to, final Object from, final String... ignoredProperties) {
+    mergeValues(getKeysFromJson(toJson(from)), to, from, ignoredProperties);
     return to;
   }
 
   /**
    * Find field.
    *
-   * @param clazz
-   *            the clazz
-   * @param fieldName
-   *            the field name
+   * @param clazz the clazz
+   * @param fieldName the field name
    * @return the field
    */
   private Field findField(final Class<?> clazz, final String fieldName) {
+    Field field = null;
     Class<?> current = clazz;
 
     do {
       try {
-        return current.getDeclaredField(fieldName);
-      } catch (Exception e) {
-        logger.debug(
-            "exception ignored while getting declared field {} for class {}: {}",
-            fieldName, clazz, e.getMessage());
+        field = current.getDeclaredField(fieldName);
+      } catch (NoSuchFieldException | SecurityException exception) {
+        LOGGER.debug("exception ignored while getting declared field {} for class {}: {}",
+            fieldName, clazz, exception.getMessage());
       }
     } while ((current = current.getSuperclass()) != null);
 
-    return null;
+    return field;
   }
 
   /**
    * Merge values.
    *
-   * @param keysFrom            the keys from
-   * @param to            the to
-   * @param from            the from
+   * @param keysFrom the keys from
+   * @param to the to Object
+   * @param from the from Object
    * @param ignoredProperties the ignored properties
    */
   @SuppressWarnings("rawtypes")
-  private void mergeValues(final List keysFrom, final Object to,
-      final Object from, final String[] ignoredProperties) {
-    Class toClass = to.getClass();
-    Class fromClass = from.getClass();
+  private void mergeValues(final List keysFrom, final Object to, final Object from,
+      final String... ignoredProperties) {
+    final Class toClass = to.getClass();
+    final Class fromClass = from.getClass();
 
     if (null != ignoredProperties) {
       Arrays.sort(ignoredProperties);
     }
 
-    for (Object key : keysFrom) {
+    for (final Object key : keysFrom) {
       try {
         if (null != ignoredProperties
             && Arrays.binarySearch(ignoredProperties, key.toString()) < 0) {
-          Field fieldTo = findField(toClass, key.toString());
-          Field fieldFrom = findField(fromClass, key.toString());
+          final Field fieldTo = findField(toClass, key.toString());
+          final Field fieldFrom = findField(fromClass, key.toString());
 
           if (null == fieldTo) {
-            logger.debug("fieldTo is null for class {}, using key {}", toClass,
-                key);
-          }
-          
-          if (null == fieldFrom) {
-            logger.debug("fieldFrom is null for class {}, using key {}",
-                fromClass, key);
+            LOGGER.debug("fieldTo is null for class {}, using key {}", toClass, key);
           }
 
-          if (null != fieldTo && null != fieldFrom) {
-            fieldTo.setAccessible(true);
-            fieldFrom.setAccessible(true);
-            fieldTo.set(to, fieldFrom.get(from));
+          if (null == fieldFrom) {
+            LOGGER.debug("fieldFrom is null for class {}, using key {}", fromClass, key);
           }
+
+          setFieldValues(to, fieldTo, from, fieldFrom);
         }
-      } catch (Exception e) {
-        logger.error(
-            "Exception occured while setting value for key '{}' -  from ['{}'] ; to ['{}']:",
-            key, from, to, e);
+      } catch (IllegalArgumentException | IllegalAccessException exception) {
+        LOGGER.error(
+            "Exception occured while setting value for key '{}' -  from ['{}'] ; to ['{}']:", key,
+            from, to, exception);
       }
+    }
+  }
+  
+  /**
+   * Sets the field values.
+   *
+   * @param to the to
+   * @param fieldTo the field to
+   * @param from the from
+   * @param fieldFrom the field from
+   * @throws IllegalArgumentException the illegal argument exception
+   * @throws IllegalAccessException the illegal access exception
+   */
+  private static void setFieldValues(final Object to, final Field fieldTo, final Object from,
+      final Field fieldFrom) throws IllegalArgumentException, IllegalAccessException {
+    if (null != fieldTo && null != fieldFrom) {
+      fieldTo.setAccessible(true);
+      fieldFrom.setAccessible(true);
+      fieldTo.set(to, fieldFrom.get(from));
     }
   }
 
   /**
    * Gets the keys from json.
    *
-   * @param json
-   *            the json
+   * @param json the json
    * @return the keys from json
-   * @throws Exception
-   *             the exception
    */
   @SuppressWarnings("rawtypes")
-  private List getKeysFromJson(final String json) throws Exception {
-    Object things = gson.fromJson(json, Object.class);
-    List keys = new ArrayList();
+  private List getKeysFromJson(final String json) {
+    final Object things = gson.fromJson(json, Object.class);
+    final List keys = new ArrayList();
     collectAllTheKeys(keys, things);
     return keys;
   }
@@ -210,25 +208,24 @@ public class GsonConverterServiceImpl implements GsonConverterService {
   /**
    * Collect all the keys.
    *
-   * @param keys
-   *            the keys
-   * @param o
-   *            the o
+   * @param keys the keys
+   * @param object the object
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
-  private void collectAllTheKeys(final List keys, final Object o) {
+  private void collectAllTheKeys(final List keys, final Object object) {
     Collection values = null;
-    if (o instanceof Map) {
-      Map map = (Map) o;
+
+    if (object instanceof Map) {
+      final Map map = (Map) object;
       keys.addAll(map.keySet());
       values = map.values();
-    } else if (o instanceof Collection) {
-      values = (Collection) o;
+    } else if (object instanceof Collection) {
+      values = (Collection) object;
     } else {
       return;
     }
 
-    for (Object value : values) {
+    for (final Object value : values) {
       collectAllTheKeys(keys, value);
     }
   }
