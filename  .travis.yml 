@@ -1,6 +1,6 @@
 language: java
-jdk: 
+script: mvn clean compile test javadoc:javadoc package
+jdk:
   - oraclejdk8
-script: 
-  mvn clean compile test -f ./pom.xml
-  
+os:
+  - linux
