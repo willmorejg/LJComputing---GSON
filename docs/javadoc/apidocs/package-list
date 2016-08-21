@@ -1,0 +1,5 @@
+net.ljcomputing.gson.annotation
+net.ljcomputing.gson.config
+net.ljcomputing.gson.converter
+net.ljcomputing.gson.converter.impl
+net.ljcomputing.gson.strategy
